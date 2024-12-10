@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="position:absolute; top:9rem; left:8rem;">
+    <h2></h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Bio</th>
+                <th>Date of Birth</th>
+                <th>Nationality</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for author in authors %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if author.authorimage %}
+                        <img src="{{ author.authorimage.url }}" alt="{{ author.author_name }}" width="50" height="50">
+                    {% else %}
+                        <span>No Image</span>
+                    {% endif %}
+                </td>
+                <td>{{ author.author_name }}</td>  <!-- Updated to match the model field -->
+                <td>{{ author.bio|truncatewords:15 }}</td> 
+                <td>{{ author.date_of_birth|date:"F d, Y" }}</td>  
+                <td>{{ author.nationality }}</td>
+                <td>
+                    <a href="{% url 'author_detail' author.author_id %}" class="btn btn-sm btn-info">View</a>
+                    {% if user.is_authenticated and user.is_superuser %}
+                        <a href="{% url 'edit_author' author.author_id %}" class="btn btn-sm btn-primary">Edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No authors found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+
+

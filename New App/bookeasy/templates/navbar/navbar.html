@@ -1,0 +1,279 @@
+<!-- Navbar Top -->
+{% load static %}
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container">
+        <!-- Logo -->
+        <div style="position:absolute; left:1%; top:1rem" >
+        {% load static %}
+        <a class="navbar-brand" href="{% url 'base' %}">
+            <img src="{% static 'images/ticketLogo.png' %}" alt="BookEasy" width="100" height="30">
+        </a>
+       </div>
+        <!-- Navbar Toggle for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+                 
+      <!-- search form in the template -->
+                <form class="d-flex mx-auto w-100" style="max-width: 70%; position: absolute; top: 0.5rem; left: 12rem;" action="{% url 'search_authors' %}" method="get">
+                    <div class="input-group" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                    <input 
+                        class="form-control" 
+                        type="search" 
+                        name="q" 
+                        placeholder="Search Authors, Books, Category" 
+                        aria-label="Search" 
+                        value="{{ query|default:'' }}" 
+                        style="border-radius: 1px; padding: 10px 15px; font-size: 1rem;"
+                    >
+                    <button 
+                        class="btn" 
+                        type="submit" 
+                        style="background-color: #007bff; color: white; border: none; border-radius: 1px; padding: 0 20px; font-size: 1rem;"
+                    >
+                        Search
+                    </button>
+                    </div>
+                </form>
+            
+
+                <!-- Navbar Links -->
+<div class="collapse navbar-collapse" id="navbarNav" style="position:absolute; right:1.5rem; top:0.7rem;">
+    <ul class="navbar-nav ms-auto">
+        {% if user.is_authenticated %}
+        <!-- Logged-in User Dropdown -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center justify-content-center" 
+               href="#" 
+               id="userDropdown" 
+               role="button" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false" 
+               style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ddd; font-weight: bold; text-transform: uppercase; color: #333; background-color: #f8f9fa; transition: all 0.3s;">
+                {{ user.username|slice:":1" }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <!-- Profile Link -->
+                <li>
+                    <a class="dropdown-item" href="{% url 'myprofile' %}">Profile</a>
+                </li>
+                <!-- Update Profile Link -->
+                <li>
+                    <a class="dropdown-item" href="{% url 'updateprofile' %}">Update Account</a>
+                </li>
+                <!-- Divider -->
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <!-- Logout Link -->
+                <li>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                </li>
+            </ul>
+        </li>
+        {% else %}
+        <!-- Login/Register Button -->
+        <li class="nav-item">
+            <button class="btn btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#authModal">
+                Sign In
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+<!-- Modal -->
+
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: rgba(255, 255, 255, 0.9);">
+            <div class="modal-header border-bottom-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <h5 class="text-center mb-3">Login</h5>
+                    <form id="loginAjaxForm" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        <div class="text-center mt-3">
+                            <a href="#" id="showRegister" class="small">Create an account</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="d-none">
+                    <h5 class="text-center mb-3">Register</h5>
+                    <form id="registerAjaxForm" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="regUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="regUsername" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Register</button>
+                        <div class="text-center mt-3">
+                            <a href="#" id="showLogin" class="small">Already have an account? Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <nav class="navbar navbar-expand-lg bg-dark py-0" style="top:4rem; position:absolute; right:0%; width:85rem;">
+        <div class="container" style="letter-spacing:2px;">
+            <ul class="navbar-nav">
+                <!-- Books -->
+                <li class="nav-item">
+                    <a class="nav-link text-white px-2 small" href="{% url 'books' %}">Books</a>
+                </li>
+                <!-- Movies -->
+                <li class="nav-item">
+                    <a class="nav-link text-white px-2 small" href="{% url 'movies' %}">Movies</a>
+                </li>
+                <!-- order History -->
+                <li class="nav-item">
+                    <a class="nav-link text-white px-2 small" href="{% url 'order_history' %}">Order_History</a>
+                </li>
+                <!-- View Author -->
+                {% if user.is_authenticated and user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link text-white px-2 small" href="{% url 'authors_list' %}">AUTHOR_LIST</a>
+                </li>
+                <!-- Add Author -->
+                <li class="nav-item">
+                    <a class="nav-link text-white px-2 small" href="{% url 'add_author' %}">ADD_AUTHOR</a>
+                </li>
+                {% endif %}
+                
+                <!-- Cart Icon with Total Quantity -->
+                {% if user.is_authenticated %}
+                <div>
+                    {% load static %}
+                    <a href="{% url 'cart_view' %}" style="position:absolute; right:2rem; top:0.4rem;">
+                        <img src="{% static 'images/icons8-cart-48.png' %}" alt="Cart" style="width: 32px; height: 32px;">
+                        
+                        <!-- Display the badge if total_quantity > 0 -->
+                        {% if total_quantity %}
+                        <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; padding: 2px 6px; border-radius: 50%; font-size: 12px;">
+                            {{ total_quantity }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const showRegister = document.getElementById('showRegister');
+    const showLogin = document.getElementById('showLogin');
+    const loginAjaxForm = document.getElementById('loginAjaxForm');
+    const registerAjaxForm = document.getElementById('registerAjaxForm');
+
+    // Toggle between Login and Register forms
+    showRegister.addEventListener('click', function (e) {
+        e.preventDefault();
+        loginForm.classList.add('d-none');
+        registerForm.classList.remove('d-none');
+    });
+
+    showLogin.addEventListener('click', function (e) {
+        e.preventDefault();
+        registerForm.classList.add('d-none');
+        loginForm.classList.remove('d-none');
+    });
+
+    // Login AJAX Submission
+    loginAjaxForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(loginAjaxForm);
+        const response = await fetch("{% url 'login_ajax' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+        const result = await response.json();
+        if (result.success) {
+            location.reload();
+        } else {
+            // Get the login form element
+    const loginForm = document.querySelector('#loginForm'); // Replace #loginForm with the correct ID of your login form
+
+    // Create or find the error message container
+    let errorMessage = loginForm.querySelector('.error-message');
+    if (!errorMessage) {
+        errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message alert alert-danger mt-2'; // Add styling classes for the error message
+        loginForm.appendChild(errorMessage);
+    }
+
+    // Set the error message and show it
+    errorMessage.textContent = result.message;
+    errorMessage.style.display = 'block';
+
+    // Remove the error message after 3 seconds
+    setTimeout(() => {
+        errorMessage.style.display = 'none';
+    }, 3000);
+        }
+    });
+
+    // Register AJAX Submission
+    registerAjaxForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const formData = new FormData(registerAjaxForm);
+        const response = await fetch("{% url 'register_ajax' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+        const result = await response.json();
+        if (result.success) {
+            alert("Registration successful! Please log in.");
+            registerForm.classList.add('d-none');
+            loginForm.classList.remove('d-none');
+        } else {
+            alert(result.message);
+        }
+    });
+});
+</script>
+
+
+
+

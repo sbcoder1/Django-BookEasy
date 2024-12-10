@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="authordiv" style="position:absolute; top:11rem; left:11rem;">
+<div style="max-width: 1000px; margin: 20px auto;  padding: 20px; background-color: #ffffff; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: flex;">
+    <!-- Left Section (Author Image) -->
+    <div style="flex: 1; padding: 10px; text-align: center; border-right: 1px solid #ddd;">
+        {% if author.authorimage %}
+        <img src="{{ author.authorimage.url }}" alt="{{ author.author_name }}" style="max-width: 200px; border-radius: 4px; margin-bottom: 10px;">
+        {% else %}
+        <img src="https://via.placeholder.com/150" alt="No Image" style="max-width: 200px; border-radius: 4px; margin-bottom: 10px;">
+        {% endif %}
+    </div>
+
+    <!-- Right Section (Author Details) -->
+    <div style="flex: 2; padding: 20px;">
+        <h1 style="font-size: 1.8rem; margin-bottom: 5px; color: #333;">{{ author.author_name }}</h1>
+
+        <!-- Author Bio and Information -->
+        <h4>About the Author</h4>
+        <p><strong></strong> {{ author.bio }}</p>
+        <p><strong>Date of Birth:</strong> {% if author.date_of_birth %}{{ author.date_of_birth|date:"F d, Y" }}{% else %}N/A{% endif %}</p>
+        <p><strong>Nationality:</strong> {{ author.nationality }}</p>
+        <p><strong>Email:</strong> <a href="mailto:{{ author.email }}">{{ author.email }}</a></p>
+        <p><strong>Website:</strong> <a href="{{ author.website }}" target="_blank">{{ author.website }}</a></p>
+
+        <h4>Books by {{ author.author_name }}</h4>
+        <ul>
+            {% for book in author.books.all %}
+                <li>{{ book.book_name }} </li>
+            {% empty %}
+                <li>No books listed for this author.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</div>
+{% endblock %}

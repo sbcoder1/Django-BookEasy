@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5" style="position:absolute; top:5rem; width: 100%; padding: 0 15px;">
+    <div class="card shadow-lg" style="border-radius: 10px; overflow: hidden;">
+        <div class="card-header bg-primary text-white" style="padding: 1.25rem 1.5rem;">
+            <h2 class="mb-0" style="font-size: 1.75rem; font-weight: 600;">Order History</h2>
+        </div>
+        <div class="card-body" style="padding: 1.5rem;">
+            {% if orders %}
+                <table class="table table-bordered table-striped" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Order Number</th>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Product Name</th>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Quantity</th>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Total Amount</th>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Status</th>
+                            <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Order Time</th>
+                            {% if user.is_superuser %}
+                                <th style="text-align: left; padding: 0.75rem; font-weight: bold;">Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td style="padding: 0.75rem;">{{ order.order_no }}</td>
+                                <td style="padding: 0.75rem;">{{ order.product_name }}</td>
+                                <td style="padding: 0.75rem;">{{ order.product_quantity }}</td>
+                                <td style="padding: 0.75rem;">₹ {{ order.total_amount }}</td>
+                                <td style="padding: 0.75rem;">
+                                    {% if order.status == "Pending" %}
+                                        <span class="badge" style="background-color: #ffc107; color: #212529; padding: 0.25rem 0.75rem; font-size: 0.875rem;">{{ order.status }}</span>
+                                    {% elif order.status == "Delivered" %}
+                                        <span class="badge" style="background-color: #28a745; color: white; padding: 0.25rem 0.75rem; font-size: 0.875rem;">{{ order.status }}</span>
+                                    {% elif order.status == "Dispatched" %}
+                                        <span class="badge" style="background-color: #17a2b8; color: white; padding: 0.25rem 0.75rem; font-size: 0.875rem;">{{ order.status }}</span>
+                                    {% else %}
+                                        <span class="badge" style="background-color: #6c757d; color: white; padding: 0.25rem 0.75rem; font-size: 0.875rem;">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 0.75rem;">{{ order.order_time }}</td>
+                                {% if user.is_superuser %}
+                                    <td style="padding: 0.75rem;">
+                                        {% if order.status != "Dispatched" and order.status != "Delivered" %}
+                                            <form action="{% url 'dispatch_order' order.order_id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-info" style="padding: 0.25rem 0.75rem; font-size: 0.875rem; border-radius: 0.25rem;">Dispatch</button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted" style="font-size: 0.875rem;">No Action</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted" style="font-size: 1rem;">No orders found.</p>
+            {% endif %}
+        </div>
+        <div class="card-footer text-center bg-light" style="padding: 1.25rem 1.5rem;">
+            <a href="{% url 'books' %}" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 1rem; border-radius: 0.25rem;">Shop More</a>
+            <a href="{% url 'download_receipt' %}" class="btn btn-sm btn-danger" style="padding: 0.5rem 1.25rem; font-size: 1rem; border-radius: 0.25rem;">Download Order History (PDF)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>

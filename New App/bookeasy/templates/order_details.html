@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5" style="position:absolute; top:6rem;">
+    {% if user.is_authenticated and user.is_superuser %}
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white" >
+            <h2 class="mb-0">Order Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-6">
+                    <h5>Order Number:</h5>
+                    <p class="text-muted">{{ order.order_no }}</p>
+                </div>
+                <div class="col-6">
+                    <h5>Order Status:</h5>
+                    <p class="text-muted">{{ order.status }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <h5>Product Name:</h5>
+                    <p class="text-muted">{{ order.product_name }}</p>
+                </div>
+                <div class="col-6">
+                    <h5>Quantity:</h5>
+                    <p class="text-muted">{{ order.product_quantity }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <h5>Total Amount:</h5>
+                    <p class="text-muted">₹ {{ order.total_amount }}</p>
+                </div>
+                <div class="col-6">
+                    <h5>Order Time:</h5>
+                    <p class="text-muted">{{ order.order_time }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center bg-light">
+            <a href="{% url 'order_history' %}" class="btn btn-outline-primary">View Order History</a>
+            <a href="{% url 'books' %}" class="btn btn-primary">Shop More</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

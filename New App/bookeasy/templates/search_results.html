@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Search Results</h2>
+    {% if query %}
+        <p>Results for "<strong>{{ query }}</strong>":</p>
+    {% else %}
+        <p>No search query was provided.</p>
+    {% endif %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Bio</th>
+                <th>Date of Birth</th>
+                <th>Nationality</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for author in authors %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if author.authorimage %}
+                        <img src="{{ author.authorimage.url }}" alt="{{ author.author_name }}" width="50" height="50">
+                    {% else %}
+                        <span>No Image</span>
+                    {% endif %}
+                </td>
+                <td>{{ author.author_name }}</td>  <!-- Correct field name -->
+                <td>{{ author.bio|truncatewords:15 }}</td>  <!-- Truncates bio to 15 words -->
+                <td>{{ author.date_of_birth|date:"F d, Y" }}</td>  <!-- Formats the date nicely -->
+                <td>{{ author.nationality }}</td>
+                <td>
+                    <a href="{% url 'author_detail' author.author_id %}" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No authors found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

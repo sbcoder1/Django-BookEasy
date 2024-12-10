@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5" style="position:absolute; top:5rem;">
+    <h2>Profile Deatils</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Deatils</button>
+    </form>
+</div>
+{% endblock %}

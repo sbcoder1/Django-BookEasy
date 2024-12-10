@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5" style="position:absolute; top:8rem; left:8rem;">
+    <h1 class="mb-4" ></h1>
+    {% if user.is_authenticated and user.is_staff %}
+    <div class="mb-4">
+        <a href="{% url 'add_movie' %}" class="btn btn-success">Add New Movies</a>
+    </div>
+    {% endif %}
+    <table class="table table-striped">
+        <thead>
+            <tr>  
+                <th>#</th>
+                <th>Movie Name</th>
+                <th>Language</th>
+                <th>Duration</th>
+                <th>Director</th>
+                <th>Male Actor</th>
+                <th>Female Actor</th>
+                <th>Music</th>
+                <th>Category</th>
+                <th>Movie Image</th>
+                {% if user.is_authenticated and user.is_staff %}
+                <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>  
+                <td>{{ forloop.counter }}</td>
+                <td>{{ movie.name }}</td>
+                <td>{{ movie.language }}</td>
+                <td>{{ movie.duration }}</td>
+                <td>{{ movie.director }}</td>
+                <td>${{ movie.maleactor }}</td>
+                <td>{{ movie.femaleactor }}</td>
+                <td>{{ movie.music }}</td>
+                <td>{{ movie.category }}</td>
+                <td>{{ movie.movieimage }}</td>
+                {% if user.is_authenticated and user.is_staff %}
+                <td>
+                    <!-- Edit Button -->
+                    <a href="{% url 'edit_movie' movie.id %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> 
+                    </a>
+                    <!-- Delete Button -->
+                    <form action="{% url 'delete_movie' movie.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i> 
+                        </button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

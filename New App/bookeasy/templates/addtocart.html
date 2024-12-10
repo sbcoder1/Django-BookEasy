@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; padding: 2rem; font-family: Arial, sans-serif; position: relative; top: 5rem;">
+
+    <!-- Shopping Cart Section -->
+    <div style="flex: 3; max-width: 970px; width:80rem; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); right: 0rem;">
+        <h1 style="font-size: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 1rem; margin-bottom: 2rem;">Your Cart</h1>
+
+        {% if cart_items %}
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+            <thead>
+                <tr style="border-bottom: 2px solid #ddd; text-align: left;">
+                    <th style="padding: 1rem;">Product</th>
+                    <th style="padding: 1rem; text-align: center;">Price</th>
+                    <th style="padding: 1rem; text-align: center;">Quantity</th>
+                    <th style="padding: 1rem; text-align: center;">Total</th>
+                    <th style="padding: 1rem; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 1rem; display: flex; align-items: center;">
+                        <img src="{{ item.book_image.url }}" alt="{{ item.book_name }}" style="width: 60px; height: 60px; margin-right: 1rem; border-radius: 4px;">
+                        <span>{{ item.book_name }}</span>
+                    </td>
+                    <td style="text-align: center;">${{ item.price_at_addition }}</td>
+                    <td style="text-align: center;">
+                        <form action="{% url 'update_cart' item.cart_id 'decrease' %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: #f44336; color: white; border: none; border-radius: 4px; padding: 0.5rem;">-</button>
+                        </form>
+                        <span>{{ item.quantity }}</span>
+                        <form action="{% url 'update_cart' item.cart_id 'increase' %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: #4caf50; color: white; border: none; border-radius: 4px; padding: 0.5rem;">+</button>
+                        </form>
+                    </td>
+                    <td style="text-align: center;">${{ item.total_price }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'remove_from_cart' item.cart_id %}" style="background: #f44336; color: white; text-decoration: none; padding: 0.5rem; border-radius: 4px;">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Your cart is empty.</p>
+        {% endif %}
+    </div>
+
+    <!-- Order Summary -->
+    <div style="flex: 1; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+        <h2 style="font-size: 1.5rem; border-bottom: 2px solid #ddd; padding-bottom: 1rem;">Order Summary</h2>
+        <p style="margin-bottom: 1rem;">Subtotal: ₹ {{ total_price }}</p>
+        <p style="margin-bottom: 1rem;">Shipping: Free</p>
+        <h3 style="margin-bottom: 1.5rem;">Total: ₹ {{ total_price }}</h3>
+        <a id="checkout-btn" href="{% url 'checkout' %}" 
+           style="display: block; text-align: center; padding: 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">
+            Checkout
+        </a>
+    </div>
+</div>
+
+<!-- Notification Div -->
+<div id="notification" style="display: none; position: fixed; top: 5rem; right: 30rem; background: #f44336; color: white; padding: 1rem; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+    Your cart is empty. Please add products to proceed.
+</div>
+
+<script>
+    document.getElementById('checkout-btn').addEventListener('click', function (event) {
+        {% if not cart_items %}
+        event.preventDefault(); // Prevent navigation
+        const notification = document.getElementById('notification');
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000); // Automatically close after 3 seconds
+        {% endif %}
+    });
+</script>
+{% endblock %}
+
+
+
