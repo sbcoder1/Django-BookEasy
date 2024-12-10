@@ -27,7 +27,7 @@ from django.utils.timezone import localdate
 
 
 
-
+#--Books-Section--
 def base(request):
     book = Book.objects.all()
     return render(request, 'base.html', {'book': book})
@@ -67,18 +67,21 @@ def delete_book(request, book_id):
     book.delete()
     return redirect('base')
 
+#--homepage--
 def homepage(request):
     return render(request, 'homepage.html')
 
+#--logout--
 def logout_user(request):
     logout(request)
     return redirect('base')
 
+#--profile--
 def profile_user(request):
     return ('profile')
 
 
-
+#--login-ajax-form--
 @csrf_exempt
 def login_ajax(request):
     if request.method == "POST" and request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -93,6 +96,8 @@ def login_ajax(request):
     return JsonResponse({"success": False, "message": "Invalid request"})
 
 @csrf_exempt
+
+#--register-ajax-form
 def register_ajax(request):
     if request.method == "POST" and request.headers.get("X-Requested-With") == "XMLHttpRequest":
         username = request.POST.get("username")
@@ -112,9 +117,11 @@ def register_ajax(request):
     return JsonResponse({"success": False, "message": "Invalid request"},locals())
 
 
+#--Movie-Section--
 @login_required
 @user_passes_test(is_admin)
 
+#--Add-Movie--
 def add_movie(request):
     if request.method == 'POST':
         form = MovieForm(request.POST,request.FILES)
@@ -135,7 +142,7 @@ def movies(request):
     movies = Movie.objects.all()
     return render(request, 'movie.html', {'movies': movies})
 
-
+#--Edit-Movie--
 @login_required
 @user_passes_test(is_admin)
 def edit_movie(request, movie_id):
@@ -149,7 +156,7 @@ def edit_movie(request, movie_id):
         form = MovieForm(instance=movie)
     return render(request, 'edit_movie.html', {'form': form, 'movie': movie})
 
-
+#--Delete-Movie--
 @login_required
 @user_passes_test(is_admin)
 def delete_movie(request, movie_id):
@@ -157,12 +164,13 @@ def delete_movie(request, movie_id):
     movie.delete()
     return redirect('base')
 
-
+#--Author-Deatils--
 def author_detail(request, author_id):
     author = get_object_or_404(Authors, author_id=author_id)
     books = Book.objects.filter(author_uuid=author)
     return render(request, 'author_detail.html', {'author': author, 'books': books})
 
+#--Add-Author--
 @login_required
 @user_passes_test(is_admin)
 def add_author(request):
@@ -175,12 +183,14 @@ def add_author(request):
         form = AuthorsForm()
     return render(request, 'add_author.html', {'form': form})
 
+#--Display-Auhtor-List--
 @login_required
 @user_passes_test(is_admin)
 def authors_list(request):
     authors = Authors.objects.all()
     return render(request, 'authors_list.html', {'authors': authors})
 
+#--Edit-Author-Deatils--
 @login_required
 @user_passes_test(is_admin)
 def edit_author(request, author_id):
@@ -195,6 +205,7 @@ def edit_author(request, author_id):
     return render(request, 'edit_author.html', {'form': form})
 
 
+#--Books-Deatils--
 def book_details(request, book_id):
     book = get_object_or_404(Book, book_id=book_id)
     author = book.author_uuid  
@@ -205,7 +216,7 @@ def book_details(request, book_id):
     query = request.GET.get('q', '')  # Get the search query from the URL parameter 'q'
     authors = Authors.objects.filter(author_name__icontains=query) if query else Authors.objects.all()  # Filter by 'author_name'
     return render(request, 'search_results.html', {'authors': authors, 'query': query})"""
-    
+
 def search_authors(request):
     query = request.GET.get('q', '')  
     
@@ -314,9 +325,7 @@ def cart_view(request):
     })
     
 
-
-
-
+#--Profile-Section--
 @login_required
 def update_profile(request):
     profile, created = userProfile.objects.get_or_create(username=request.user)
@@ -337,7 +346,7 @@ def myprofile(request):
     return render(request,'myprofile.html')
 
 
-#------Order View------
+#------Order View Section------
 
 @login_required
 def checkout(request):
@@ -390,8 +399,7 @@ def dispatch_order(request, order_id):
     order.save()
     return redirect('order_history')
 
-
-
+#--Download Recipet--
 def download_receipt(request):
     orders = Order.objects.filter(user=request.user)
 
